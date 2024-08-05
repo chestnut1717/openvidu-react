@@ -12,7 +12,7 @@ const CreateRoom = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'https://i11c209.p.ssafy.io/api/room/create',
+        'http://localhost:8080/api/room/create',
         {
           "roomName" : "방이름",
           "roomPersonCount" : 6
@@ -21,8 +21,9 @@ const CreateRoom = () => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
-          }
-        }
+          },
+          timeout: 10000,
+        },
       );
       const roomData = response.data.data;
       console.log(roomData);

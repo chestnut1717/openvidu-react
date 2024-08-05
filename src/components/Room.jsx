@@ -9,6 +9,7 @@ const Room = () => {
   const [mainStreamManager, setMainStreamManager] = useState(null);
   const [publisher, setPublisher] = useState(null);
   const [subscribers, setSubscribers] = useState([]);
+  const [username, setUserName] = useState(null);
   const mySessionId = roomData.webrtc.sessionId;
   const myUserName = 'Participant' + Math.floor(Math.random() * 100);
   const OV = new OpenVidu();
@@ -22,6 +23,17 @@ const Room = () => {
         setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
       });
 
+      session.on('connectionCreated', event => {
+        console.log('----- connectionCreated event -----');
+        console.log(event.connection);
+        console.log(event.connection.data);
+
+        const connectionData = JSON.parse(event.connection.data);
+        console.log(connectionData);
+        setUserName(connectionData.memberName)
+        console.log('-------------------')
+      });
+
       session.on('streamDestroyed', (event) => {
         setSubscribers((prevSubscribers) =>
           prevSubscribers.filter((subscriber) => subscriber !== event.stream.streamManager)
@@ -29,7 +41,7 @@ const Room = () => {
       });
 
       try {
-        await session.connect(roomData.webrtc.openviduToken, { clientData: myUserName });
+        await session.connect(roomData.webrtc.openviduToken);
 
         const publisher = OV.initPublisher(undefined, {
           audioSource: undefined,
@@ -62,6 +74,7 @@ const Room = () => {
   return (
     <div>
       <h1>Room: {roomData.roomName}</h1>
+      <h2>Current User: {username}</h2>
       <div id="video-container">
         {mainStreamManager && (
           <div id="publisher">

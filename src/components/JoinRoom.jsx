@@ -18,7 +18,7 @@ const JoinRoom = () => {
   
     try {
       const response = await axios.post(
-        `https://i11c209.p.ssafy.io/api/room/enter?roomCode=${roomCode}`,
+        `http://localhost:8080/api/room/enter?roomCode=${roomCode}`,
         {},
         {
           headers: {
