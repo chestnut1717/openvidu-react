@@ -12,7 +12,7 @@ const CreateRoom = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/room/create',
+        'https://myapp/api/room/create',
         {
           "roomName" : "방이름",
           "roomPersonCount" : 6

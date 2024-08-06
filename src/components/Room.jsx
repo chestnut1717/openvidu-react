@@ -27,10 +27,10 @@ const Room = () => {
         console.log('----- connectionCreated event -----');
         console.log(event.connection);
         console.log(event.connection.data);
-
-        const connectionData = JSON.parse(event.connection.data);
-        console.log(connectionData);
-        setUserName(connectionData.memberName)
+        console.log(subscribers);
+        // const connectionData = JSON.parse(event.connection.data);
+        // console.log(connectionData);
+        // setUserName(connectionData.memberName)
         console.log('-------------------')
       });
 
@@ -74,7 +74,7 @@ const Room = () => {
   return (
     <div>
       <h1>Room: {roomData.roomName}</h1>
-      <h2>Current User: {username}</h2>
+      <h2>Current User: {subscribers}</h2>
       <div id="video-container">
         {mainStreamManager && (
           <div id="publisher">
@@ -82,6 +82,7 @@ const Room = () => {
           </div>
         )}
         {subscribers.map((sub, index) => (
+          console.log(sub),
           <div key={index} id="subscriber">
             <video autoPlay={true} ref={(video) => video && sub.addVideoElement(video)} />
           </div>
