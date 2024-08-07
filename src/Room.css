@@ -1,0 +1,21 @@
+/* Room.css */
+.video-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: auto;
+}
+
+.username-overlay {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 5px;
+}

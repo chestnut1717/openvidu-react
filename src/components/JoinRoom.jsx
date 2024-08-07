@@ -15,10 +15,10 @@ const JoinRoom = () => {
     setError("");
     console.log("여기까지 온거지?");
     console.log(accessToken);
-  
+
     try {
       const response = await axios.post(
-        `https://myapp/api/room/enter?roomCode=${roomCode}`,
+        `https://i11c209.p.ssafy.io/api/room/enter?roomCode=${roomCode}`,
         {},
         {
           headers: {

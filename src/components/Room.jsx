@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { OpenVidu } from 'openvidu-browser';
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { OpenVidu } from "openvidu-browser";
+import "../Room.css"; // CSS 파일을 추가하여 스타일을 정의합니다.
 
 const Room = () => {
   const location = useLocation();
@@ -10,33 +11,37 @@ const Room = () => {
   const [publisher, setPublisher] = useState(null);
   const [subscribers, setSubscribers] = useState([]);
   const [username, setUserName] = useState(null);
+  const [usernames, setUsernames] = useState({});
   const mySessionId = roomData.webrtc.sessionId;
-  const myUserName = 'Participant' + Math.floor(Math.random() * 100);
   const OV = new OpenVidu();
 
   useEffect(() => {
     const joinSession = async () => {
       const session = OV.initSession();
 
-      session.on('streamCreated', (event) => {
+      session.on("streamCreated", (event) => {
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
       });
 
-      session.on('connectionCreated', event => {
-        console.log('----- connectionCreated event -----');
+      session.on("connectionCreated", (event) => {
+        console.log("----- connectionCreated event -----");
         console.log(event.connection);
         console.log(event.connection.data);
-        console.log(subscribers);
-        // const connectionData = JSON.parse(event.connection.data);
-        // console.log(connectionData);
-        // setUserName(connectionData.memberName)
-        console.log('-------------------')
+        const connectionId = event.connection.connectionId;
+        const connectionData = JSON.parse(event.connection.data);
+        setUsernames((prevUsernames) => ({
+          ...prevUsernames,
+          [connectionId]: connectionData.memberName,
+        }));
+        console.log("-------------------");
       });
 
-      session.on('streamDestroyed', (event) => {
+      session.on("streamDestroyed", (event) => {
         setSubscribers((prevSubscribers) =>
-          prevSubscribers.filter((subscriber) => subscriber !== event.stream.streamManager)
+          prevSubscribers.filter(
+            (subscriber) => subscriber !== event.stream.streamManager
+          )
         );
       });
 
@@ -48,10 +53,10 @@ const Room = () => {
           videoSource: undefined,
           publishAudio: true,
           publishVideo: true,
-          resolution: '640x480',
+          resolution: "640x480",
           frameRate: 30,
-          insertMode: 'APPEND',
-          mirror: false
+          insertMode: "APPEND",
+          mirror: false,
         });
 
         session.publish(publisher);
@@ -60,7 +65,7 @@ const Room = () => {
         setMainStreamManager(publisher);
         setPublisher(publisher);
       } catch (error) {
-        console.error('There was an error connecting to the session:', error);
+        console.error("There was an error connecting to the session:", error);
       }
     };
 
@@ -74,17 +79,33 @@ const Room = () => {
   return (
     <div>
       <h1>Room: {roomData.roomName}</h1>
-      <h2>Current User: {subscribers}</h2>
+      <h2>Current Users:</h2>
+      <ul>
+        {Object.keys(usernames).map((connectionId) => (
+          <li key={connectionId}>{usernames[connectionId]}</li>
+        ))}
+      </ul>
       <div id="video-container">
         {mainStreamManager && (
-          <div id="publisher">
-            <video autoPlay={true} ref={(video) => video && mainStreamManager.addVideoElement(video)} />
+          <div className="video-wrapper">
+            <video
+              autoPlay={true}
+              ref={(video) => video && mainStreamManager.addVideoElement(video)}
+            />
+            <div className="username-overlay">
+              {usernames[session.connection.connectionId]}
+            </div>
           </div>
         )}
         {subscribers.map((sub, index) => (
-          console.log(sub),
-          <div key={index} id="subscriber">
-            <video autoPlay={true} ref={(video) => video && sub.addVideoElement(video)} />
+          <div key={index} className="video-wrapper">
+            <video
+              autoPlay={true}
+              ref={(video) => video && sub.addVideoElement(video)}
+            />
+            <div className="username-overlay">
+              {usernames[sub.stream.connection.connectionId]}
+            </div>
           </div>
         ))}
       </div>
