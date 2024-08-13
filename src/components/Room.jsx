@@ -49,6 +49,7 @@ const Model = ({ url, targetSize }) => {
       const box = new Box3().setFromObject(scene);
       const size = new Vector3();
       box.getSize(size);
+      console.log(child);
 
       const maxSize = Math.max(size.x, size.y, size.z);
       scaleFactor = targetSize / maxSize;
@@ -56,6 +57,7 @@ const Model = ({ url, targetSize }) => {
       scene.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
       if (child instanceof Mesh) {
+        console.log("mesh instance:, ", child);
         const material = new MeshStandardMaterial({
           map: child.material.map,
           roughness: 0.5,
@@ -197,17 +199,14 @@ const Room = () => {
   // mediapipe가 매 영상 프레임마다 얼굴에서 코 위치 추출하는 로직
   const drawLandmarks = (landmarks) => {
     const canvas = canvasRef.current;
-    console.log("drawLandmark canvas", canvas);
     if (canvas) {
       const context = canvas.getContext("2d");
       if (context) {
-        console.log('context 존재')
         const noseTipIndex = 1;
         if (landmarks[noseTipIndex]) {
           const noseTip = landmarks[noseTipIndex];
           noseX = noseTip.x * canvas.width;
           noseY = noseTip.y * canvas.height;
-          console.log("코코코코코코코", noseX);
         }
       }
     } else {
@@ -243,9 +242,7 @@ const Room = () => {
       });
       video.srcObject = stream;
       video.addEventListener("loadeddata", () => {
-        console.log("이벤트 감지");
         predict();
-        console.log("그리냐?");
         drawComposite();
       });
     } catch (err) {
@@ -257,9 +254,7 @@ const Room = () => {
     const video = videoRef.current;
     const outputCanvas = outputCanvasRef.current;
 
-    console.log("알고있니 gl");
     if (video && outputCanvas) {
-      console.log("여긴 넘어오나 1");
       const ctx = outputCanvas.getContext("2d");
 
       // 주기적으로 비디오와 캔버스의 내용을 합성하여 출력 캔버스에 그리기
@@ -276,7 +271,6 @@ const Room = () => {
 
   useEffect(() => {
     if (gl) {
-      console.log("gl dom element", gl.domElement);
       drawComposite();
     }
   }, [gl]);
@@ -312,19 +306,14 @@ const Room = () => {
       console.log(session);
 
       // 비디오 캡처 후 퍼블리싱
-      console.log("여기까지오냐? 1");
-
       if (videoRef.current) {
-        console.log("여기까지오냐? 2");
         console.log(videoRef.current);
 
         // 합성된 캔버스 스트림 캡처 후 퍼블리싱
         const stream = outputCanvasRef.current.captureStream();
-        console.log("여기까지오냐? 3");
         console.log(stream);
 
         const videoTrack = stream.getVideoTracks()[0];
-        console.log("여기까지오냐? 4");
         console.log(videoTrack);
 
         const publisher = OV.initPublisher(undefined, {
@@ -362,21 +351,41 @@ const Room = () => {
                   <div className="flex gap-5">
         <button
           className="text-xl bg-blue-500 text-white px-4 py-2 rounded-sm"
-          onClick={() => handleChangeMask("/mask/fox/fox.glb")}
+          onClick={() => handleChangeMask("/mask/01_fox.glb")}
         >
           여우가면
         </button>
         <button
           className="text-xl bg-blue-500 text-white px-4 py-2 rounded-sm"
-          onClick={() => handleChangeMask("/mask/catwoman_mask/scene.glb")}
+          onClick={() => handleChangeMask("/mask/02_catwoman.glb")}
         >
           고양이가면
         </button>
         <button
           className="text-xl bg-blue-500 text-white px-4 py-2 rounded-sm"
-          onClick={() => handleChangeMask("/mask/party_mask/party_mask_1.glb")}
+          // onClick={() => handleChangeMask("/mask/03_party_mask.glb")}
+          onClick={() => handleChangeMask("/mask/03_party_mask.glb")}
+
         >
           파티 가면
+        </button>
+        <button
+          className="text-xl bg-blue-500 text-white px-4 py-2 rounded-sm"
+          onClick={() => handleChangeMask("/mask/04_spiderman.glb")}
+        >
+          스파이더맨
+        </button>
+        <button
+          className="text-xl bg-blue-500 text-white px-4 py-2 rounded-sm"
+          onClick={() => handleChangeMask("/mask/05_sunglasses.glb")}
+        >
+          선글라스
+        </button>
+        <button
+          className="text-xl bg-blue-500 text-white px-4 py-2 rounded-sm"
+          onClick={() => handleChangeMask("/mask/06_iron_man.glb")}
+        >
+          아이언맨
         </button>
         <button
           className="text-xl bg-blue-500 text-white px-4 py-2 rounded-sm"
