@@ -198,7 +198,7 @@ const Room = () => {
 
   // mediapipe가 매 영상 프레임마다 얼굴에서 코 위치 추출하는 로직
   const drawLandmarks = (landmarks) => {
-    const canvas = canvasRef.current;
+    const canvas = outputCanvasRef.current;
     if (canvas) {
       const context = canvas.getContext("2d");
       if (context) {
@@ -412,7 +412,7 @@ const Room = () => {
 
           {/* AR 처리를 위한 캔버스 */}
           <canvas
-            ref={canvasRef}
+            ref={outputCanvasRef}
             width={videoWidth}
             height={videoHeight}
             style={{
@@ -427,13 +427,7 @@ const Room = () => {
                border: "10px solid"
             }}
           />
-          {/* 최종 합성된 비디오를 위한 출력 캔버스 */}
-          <canvas
-            ref={outputCanvasRef}
-            width={videoWidth}
-            height={videoHeight}
-            style={{ display: "none", border: "10px solid" }} // 이 캔버스는 화면에 표시하지 않음
-          />
+
 
           {/* Three.js를 사용한 AR 모델 렌더링 */}
           <Canvas
